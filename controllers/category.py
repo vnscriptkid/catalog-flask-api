@@ -33,8 +33,6 @@ class CategoryList(Resource):
         except ValidationError as err:
             return err.messages, 422
 
-        # name = result.data['name']
-
         try:
             cat = CategoryModel(**result.data)
             cat.save()

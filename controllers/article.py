@@ -4,12 +4,35 @@ from sqlalchemy.orm.exc import NoResultFound
 from schemas.article import article_schema, articles_schema
 from models.article import ArticleModel
 from models.category import CategoryModel
+from decorators.authorization import jwt_needed
 
 api = Namespace('articles', description="Article operations")
 
 
+# def require_jwt(fn):
+#     @wraps(fn)
+#     def decorated(*args, **kwargs):
+#         token = None
+#
+#         if 'Authorization' in request.headers:
+#             token = request.headers['Authorization']
+#
+#         if not token:
+#             return {'msg': 'Token is needed'}, 499
+#
+#         if token != 'abc':
+#             return {'msg': 'Token is invalid'}, 498
+#
+#         return fn(*args, **kwargs)
+#
+#     return decorated
+
+
 @api.route('/')
 class ArticleList(Resource):
+    # method_decorators = [jwt_required()]
+    # decorators = [jwt_required()]
+    @jwt_needed
     def get(self):
         arts = ArticleModel.get_all()
         try:
