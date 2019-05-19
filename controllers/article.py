@@ -1,5 +1,6 @@
 from flask_restplus import Namespace, Resource
 from marshmallow import ValidationError
+from sqlalchemy.orm.exc import NoResultFound
 from schemas.article import article_schema, articles_schema
 from models.article import ArticleModel
 from models.category import CategoryModel
@@ -31,8 +32,8 @@ class ArticleList(Resource):
         try:
             art = ArticleModel(**result.data)
             art.save()
-        except ReferenceError as refError:
-            return {'msg': refError.args}, 404
+        except NoResultFound as err:
+            return {'msg': err.args}, 404
         except:
             return {'msg': 'Can not save the article to db'}, 500
 
@@ -41,7 +42,7 @@ class ArticleList(Resource):
         except ValidationError as err:
             return err.messages, 422
 
-        return output.data, 200
+        return output.data, 201
 
 
 @api.route('/<_id>')
@@ -67,7 +68,7 @@ class Article(Resource):
             art.delete()
         except:
             return {'msg': 'Can not delete the article'}, 500
-        return {'success': True, 'msg': 'The article has been deleted'}, 200
+        return {'success': True, 'msg': 'The article has been deleted'}, 204
 
     def update(self, _id):
         art = ArticleModel.find_by_id(_id)

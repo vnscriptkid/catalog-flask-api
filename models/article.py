@@ -1,5 +1,6 @@
 from db import db
 from models.category import CategoryModel
+from sqlalchemy.orm.exc import NoResultFound
 
 
 class ArticleModel(db.Model):
@@ -16,6 +17,7 @@ class ArticleModel(db.Model):
         onupdate=db.func.current_timestamp()
     )
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    category = db.relationship('CategoryModel', backref=db.backref('articles', lazy=True))
 
     def __init__(self, title, body, category_id):
         self.title = title
@@ -25,7 +27,7 @@ class ArticleModel(db.Model):
     def save(self):
         cat = CategoryModel.find_by_id(self.category_id)
         if cat is None:
-            raise ReferenceError("'category_id' provided is invalid")
+            raise NoResultFound("'category_id' provided is invalid")
         else:
             db.session.add(self)
             db.session.commit()
@@ -37,6 +39,10 @@ class ArticleModel(db.Model):
     @classmethod
     def find_by_id(cls, _id):
         return cls.query.get(_id)
+
+    @classmethod
+    def find_by_cat(cls, cat):
+        return cls.query.with_parent(cat).all()
 
     @classmethod
     def get_all(cls):

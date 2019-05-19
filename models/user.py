@@ -1,19 +1,43 @@
+from werkzeug.security import generate_password_hash
+
 from db import db
+from errors.user import UserAlreadyExists
 
 
-class User(db.Model):
+class UserModel(db.Model):
+
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), unique=True, nullable=False)
-    password = db.Column(db.String(30), nullable=True)
-    first_name = db.Column(db.String(30), nullable=True)
-    last_name = db.Column(db.String(30), nullable=True)
-    created_at = db.Column(db.Datetime, default=db.func.current_timestamp())
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    # password = db.Column(db.String(200), nullable=False)
+    # first_name = db.Column(db.String(30), nullable=False)
+    # last_name = db.Column(db.String(30), nullable=False)
+    # created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    def __init__(self, username, password, first_name, last_name):
+    # def __init__(self, username, password, first_name, last_name):
+    #     self.username = username
+    #     self.password = generate_password_hash(password)
+    #     self.first_name = first_name
+    #     self.last_name = last_name
+
+    def __init__(self, username):
         self.username = username
-        self.password = password
-        self.first_name = first_name
-        self.last_name = last_name
 
-    def __ref__(self):
-        return "User: {}".format(self.username)
+    def save(self):
+        if self.find_by_username(self.username):
+            raise UserAlreadyExists('Username already exists')
+        else:
+            db.session.add(self)
+            db.session.commit(self)
+
+    @classmethod
+    def find_by_username(cls, username):
+        return cls.query.filter_by(username=username).first()
+
+    @classmethod
+    def find_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
+
+    def __repr__(self):
+        return "User: {} | {} | {} | {}".format(self.username, self.first_name, self.last_name, self.password)

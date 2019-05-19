@@ -1,4 +1,5 @@
 from db import db
+from errors.category import CategoryAlreadyExists
 
 
 class CategoryModel(db.Model):
@@ -7,14 +8,16 @@ class CategoryModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
-    children = db.relationship('ArticleModel')
 
     def __init__(self, name):
         self.name = name
 
     def save(self):
-        db.session.add(self)
-        db.session.commit()
+        if self.find_by_name(self.name):
+            raise CategoryAlreadyExists()
+        else:
+            db.session.add(self)
+            db.session.commit()
 
     @classmethod
     def get_all(cls):
