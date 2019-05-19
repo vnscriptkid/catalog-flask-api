@@ -6,6 +6,8 @@ from models.article import ArticleModel
 from schemas.category import category_schema, categories_schema
 from schemas.article import articles_schema
 from errors.category import CategoryAlreadyExists
+from flask_jwt import current_identity
+from decorators.authorization import jwt_needed
 
 api = Namespace('categories', description="Article operations")
 
@@ -13,7 +15,9 @@ api = Namespace('categories', description="Article operations")
 @api.route('/')
 class CategoryList(Resource):
     @staticmethod
+    @jwt_needed
     def get():
+        print('user id', current_identity.id)
         cats = CategoryModel.get_all()
         try:
             output = categories_schema.dump(cats)

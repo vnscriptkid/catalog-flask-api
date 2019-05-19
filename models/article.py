@@ -16,13 +16,16 @@ class ArticleModel(db.Model):
         default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp()
     )
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
     category = db.relationship('CategoryModel', backref=db.backref('articles', lazy=True))
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    author = db.relationship('UserModel', backref=db.backref('articles', lazy=True))
 
-    def __init__(self, title, body, category_id):
+    def __init__(self, title, body, category_id, author_id):
         self.title = title
         self.body = body
         self.category_id = category_id
+        self.author_id = author_id
 
     def save(self):
         cat = CategoryModel.find_by_id(self.category_id)
