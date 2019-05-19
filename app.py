@@ -32,10 +32,10 @@ def create_tables():
     db.create_all()
 
 
-jwt = JWT(app, authenticate, identity)
 api.add_namespace(article_api)
 api.add_namespace(category_api)
 api.add_namespace(user_api)
+# jwt = JWT(app, authenticate, identity)
 # api.add_resource(UserRegister, '/register')
 
 # Run server

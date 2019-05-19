@@ -33,10 +33,10 @@ class CategoryList(Resource):
         except ValidationError as err:
             return err.messages, 422
 
-        name = result.data['name']
+        # name = result.data['name']
 
         try:
-            cat = CategoryModel(name)
+            cat = CategoryModel(**result.data)
             cat.save()
         except CategoryAlreadyExists as err:
             return {'msg': err.msg}, 409

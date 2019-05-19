@@ -4,10 +4,13 @@ from marshmallow import Schema, fields, ValidationError, validates
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True)
-    # password = fields.Str(required=True, load_only=True)
-    # first_name = fields.Str(required=True)
-    # last_name = fields.Str(required=True)
-    # created_at = fields.DateTime(dump_only=True)
+    password = fields.Str(required=True, load_only=True)
+    first_name = fields.Str(required=True)
+    last_name = fields.Str(required=True)
+    created_at = fields.DateTime(dump_only=True)
+
+    class Meta:
+        strict = True
 
     # @validates('username')
     # def validate_username(self, username):
@@ -28,9 +31,6 @@ class UserSchema(Schema):
     # def validate_first_name(self, last_name):
     #     if len(last_name) < 3 or len(last_name) > 20:
     #         raise ValidationError("Lastname must be in between 3 and 20 characters")
-
-    class Meta:
-        strict = True
 
 
 user_schema = UserSchema()

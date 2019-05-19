@@ -3,10 +3,10 @@ class UserException(BaseException):
 
 
 class UserNotFound(UserException):
-    pass
+    msg = "User Not Found"
 
 
 class UserAlreadyExists(UserException):
-    pass
+    msg = "User already exists"
 
 
