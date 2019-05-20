@@ -1,6 +1,6 @@
 from db import db
 from models.category import CategoryModel
-from sqlalchemy.orm.exc import NoResultFound
+from errors.category import CategoryNotFound
 
 
 class ArticleModel(db.Model):
@@ -30,7 +30,7 @@ class ArticleModel(db.Model):
     def save(self):
         cat = CategoryModel.find_by_id(self.category_id)
         if cat is None:
-            raise NoResultFound("'category_id' provided is invalid")
+            raise CategoryNotFound()
         else:
             db.session.add(self)
             db.session.commit()

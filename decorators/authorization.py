@@ -20,7 +20,6 @@ def must_be_author(fn):
     @wraps(fn)
     def enhanced_fn(*args, **kwargs):
         author_id = int(kwargs['author_id'])
-        # print('author_id', author_id, ', current_user', current_identity.id)
         if current_identity.id != author_id:
             return {'msg': 'Unauthorized access'}, 401
         return fn(*args, **kwargs)

@@ -1,20 +1,19 @@
 from flask_restplus import Namespace, Resource
 from marshmallow import ValidationError
-from sqlalchemy.orm.exc import NoResultFound
+from flask_jwt import current_identity
+
 from schemas.article import article_schema, articles_schema
 from models.article import ArticleModel
-from flask_jwt import current_identity
 from decorators.authorization import jwt_needed, must_be_author
+from errors.category import CategoryNotFound
 
 api = Namespace('articles', description="Article operations")
 
 
 @api.route('/')
 class ArticleList(Resource):
-    # method_decorators = [jwt_required()]
-    # decorators = [jwt_required()]
-    # @jwt_needed
-    def get(self):
+    @staticmethod
+    def get():
         print('current user: ', current_identity)
         arts = ArticleModel.get_all()
         try:
@@ -42,8 +41,8 @@ class ArticleList(Resource):
         try:
             art = ArticleModel(**result.data)
             art.save()
-        except NoResultFound as err:
-            return {'msg': err.args}, 404
+        except CategoryNotFound as err:
+            return {'msg': err.msg}, 404
         except:
             return {'msg': 'Can not save the article to db'}, 500
 
@@ -72,6 +71,8 @@ class Article(Resource):
 
         return output.data, 200
 
+    @jwt_needed
+    @must_be_author
     def delete(self, author_id):
         art = ArticleModel.find_by_id(author_id)
         if art is None:
@@ -80,8 +81,10 @@ class Article(Resource):
             art.delete()
         except:
             return {'msg': 'Can not delete the article'}, 500
-        return {'success': True, 'author_idmsg': 'The article has been deleted'}, 204
+        return {'success': True, 'author_id': 'The article has been deleted'}, 204
 
+    @jwt_needed
+    @must_be_author
     def update(self, author_id):
         art = ArticleModel.find_by_id(author_id)
         if art is None:
