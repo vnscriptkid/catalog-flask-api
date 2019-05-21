@@ -73,6 +73,15 @@ def test_edit_article_with_token_not_by_author(test_client, init_database):
     assert json_data['msg'] == 'Unauthorized access'
 
 
+def test_edit_article_with_token_by_author(test_client, init_database):
+    update_data = { 'title': 'updated', 'body': 'updated body', 'category_id': 2 }
+    token = get_token_helper(test_client)
+    res = test_client.put('/articles/1', headers={'Authorization': 'JWT {}'.format(token)}, json=update_data)
+    json_data = json.loads(res.data)
+    assert res.status_code == 200
+    assert json_data['title'] == 'updated'
+
+
 def test_delete_article_without_token(test_client, init_database):
     res = test_client.delete('/articles/1')
     json_data = json.loads(res.data)
