@@ -19,12 +19,15 @@ def test_client():
     ctx.push()
 
     yield testing_client  # this is where the testing happens!
+    # cleanup_db(app)
 
     ctx.pop()
 
 
-def setup_db(app):
-    db.init_app(app)
+@pytest.fixture(scope='module')
+def init_database():
+    # Create the database and the database table
+    db.create_all()
 
     cat_1 = CategoryModel("Travelling")
     cat_2 = CategoryModel("Book Review")
@@ -33,3 +36,29 @@ def setup_db(app):
     db.session.add(cat_2)
 
     db.session.commit()
+
+    # Commit the changes for the users
+    db.session.commit()
+
+    yield db  # this is where the testing happens!
+
+    db.drop_all()
+
+
+# def setup_db(app):
+#     print('setup db')
+#     db.init_app(app)
+#
+#     cat_1 = CategoryModel("Travelling")
+#     cat_2 = CategoryModel("Book Review")
+#
+#     db.session.add(cat_1)
+#     db.session.add(cat_2)
+#
+#     db.session.commit()
+
+
+# def cleanup_db(app):
+#     print('cleanup db')
+#     db.init_app(app)
+#     db.drop_all()
