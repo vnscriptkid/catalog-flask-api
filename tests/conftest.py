@@ -3,6 +3,7 @@ import pytest
 from db import db
 from app_factory import create_app
 from models.category import CategoryModel
+from models.user import UserModel
 
 
 @pytest.fixture(scope="module")
@@ -12,14 +13,11 @@ def test_client():
 
     testing_client = app.test_client()
 
-    # setup_db(app)
-
     # Establish an application context before running the tests.
     ctx = app.app_context()
     ctx.push()
 
     yield testing_client  # this is where the testing happens!
-    # cleanup_db(app)
 
     ctx.pop()
 
@@ -31,9 +29,11 @@ def init_database():
 
     cat_1 = CategoryModel("Travelling")
     cat_2 = CategoryModel("Book Review")
+    user_1 = UserModel("vnscriptkid", "123456", "thanh", "nguyen")
 
     db.session.add(cat_1)
     db.session.add(cat_2)
+    db.session.add(user_1)
 
     db.session.commit()
 
@@ -45,20 +45,4 @@ def init_database():
     db.drop_all()
 
 
-# def setup_db(app):
-#     print('setup db')
-#     db.init_app(app)
-#
-#     cat_1 = CategoryModel("Travelling")
-#     cat_2 = CategoryModel("Book Review")
-#
-#     db.session.add(cat_1)
-#     db.session.add(cat_2)
-#
-#     db.session.commit()
 
-
-# def cleanup_db(app):
-#     print('cleanup db')
-#     db.init_app(app)
-#     db.drop_all()
