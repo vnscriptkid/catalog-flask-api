@@ -51,7 +51,7 @@ class ArticleModel(db.Model):
     def get_all(cls):
         return cls.query.all()
 
-    def update_props(self, title, body, category_id):
+    def update_props(self, title, body, category_id, author_id):
         self.title = title
         self.body = body
         self.category_id = category_id

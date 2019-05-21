@@ -12,15 +12,19 @@ api = Namespace('users', description="User operations")
 class UserRegister(Resource):
     @staticmethod
     def post():
+        # Parse request
         try:
             data = api.payload
         except:
             return {'msg': 'Bad request'}, 400
+
+        # Is data coming in good?
         try:
             result = user_schema.load(data)
         except ValidationError as error:
             return error.messages, 422
 
+        # Good, save to db
         try:
             user = UserModel(**result.data)
             user.save()
@@ -29,33 +33,11 @@ class UserRegister(Resource):
         except:
             return {'msg': 'Can not create new user'}, 500
 
+        # Is data coming out good?
         try:
             output = user_schema.dump(user)
         except ValidationError as err:
             return err.messages, 422
 
+        # Good, successful
         return output.data, 201
-
-    # class UserRegister(Resource):
-    #     def post(self):
-    #         try:
-    #             data = request.get_json()
-    #         except:
-    #             return {'msg': 'Bad request'}
-    #         try:
-    #             result = user_schema.load(data)
-    #         except ValidationError as error:
-    #             return error.messages, 422
-    #
-    #             return {'msg': 'Username already exists'}, 400
-    #
-    #         try:
-    #             new_user = UserModel(**result.data)
-    #             new_user.save()
-    #             print(new_user)
-    #         except ReferenceError as err:
-    #             return err.args, 409
-    #         except:
-    #             return {'msg': 'Can not create new user'}, 500
-    #
-    #         return result.data, 201

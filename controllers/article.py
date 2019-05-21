@@ -56,12 +56,11 @@ class ArticleList(Resource):
         return output.data, 201
 
 
-@api.route('/<author_id>')
+@api.route('/<article_id>')
 class Article(Resource):
-    @jwt_needed
-    @must_be_author
-    def get(self, author_id):
-        art = ArticleModel.find_by_id(author_id)
+    @staticmethod
+    def get(article_id):
+        art = ArticleModel.find_by_id(article_id)
         if art is None:
             return {'msg': 'Article not found'}, 404
         try:
@@ -73,24 +72,31 @@ class Article(Resource):
 
     @jwt_needed
     @must_be_author
-    def delete(self, author_id):
-        art = ArticleModel.find_by_id(author_id)
+    def delete(self, article_id):
+        # Does article_id exi
+        art = ArticleModel.find_by_id(article_id)
         if art is None:
             return {'msg': 'Article not found'}, 404
         try:
             art.delete()
         except:
             return {'msg': 'Can not delete the article'}, 500
-        return {'success': True, 'author_id': 'The article has been deleted'}, 204
+
+        return {'success': True}, 204
 
     @jwt_needed
     @must_be_author
-    def update(self, author_id):
-        art = ArticleModel.find_by_id(author_id)
+    def put(self, article_id):
+        # Does article_id exist?
+        art = ArticleModel.find_by_id(article_id)
         if art is None:
             return {'msg': 'Article not found'}, 404
+
+        # Is data coming in good?
         try:
             data = api.payload
+            data['author_id'] = current_identity.id
+            print('data after validating: ', data)
         except:
             return {'msg': 'Bad requests'}, 400
         try:
@@ -98,19 +104,23 @@ class Article(Resource):
         except ValidationError as err:
             return err.messages, 422
 
+        art.update_props(**result.data)
+        print('update props', art)
+        # update to db
         try:
-            art.updateProps(**result.data)
             art.save()
-        except ReferenceError as refError:
-            return {'msg': refError.args}, 404
+        except CategoryNotFound as err:
+            return {'msg': err.msg}, 404
         except:
             return {'msg': 'Can not save the article to db'}, 500
 
+        # is data coming out good?
         try:
             output = article_schema.dump(art)
         except ValidationError as err:
             return err.messages, 422
 
+        # Good, successful
         return output.data, 200
 
 
