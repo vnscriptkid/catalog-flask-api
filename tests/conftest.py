@@ -6,13 +6,13 @@ from models.category import CategoryModel
 
 
 @pytest.fixture(scope="module")
-def app():
+def test_client():
     """Create and configure a new app instance for each test."""
     app = create_app("testing")
 
     testing_client = app.test_client()
 
-    setup_db(app)
+    # setup_db(app)
 
     # Establish an application context before running the tests.
     ctx = app.app_context()
