@@ -34,3 +34,4 @@ def register_api(api):
 def init_extensions(app):
     jwt = JWT(app, authenticate, identity)
     db.init_app(app)
+    db.create_all()
