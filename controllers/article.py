@@ -96,7 +96,6 @@ class Article(Resource):
         try:
             data = api.payload
             data['author_id'] = current_identity.id
-            print('data after validating: ', data)
         except:
             return {'msg': 'Bad requests'}, 400
         try:
@@ -104,10 +103,9 @@ class Article(Resource):
         except ValidationError as err:
             return err.messages, 422
 
-        art.update_props(**result.data)
-        print('update props', art)
         # update to db
         try:
+            art.update_props(**result.data)
             art.save()
         except CategoryNotFound as err:
             return {'msg': err.msg}, 404
