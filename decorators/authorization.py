@@ -30,27 +30,9 @@ def must_be_author(fn):
         # Good, Are current user and article author the same
         author_id = art.author.id
         if current_identity.id != author_id:
-            return {'msg': 'Unauthorized access'}, 401
+            return {'msg': 'Unauthorized access'}, 403
         return fn(*args, **kwargs)
     return enhanced_fn
 
 
-# For reference
-def require_jwt(fn):
-    @wraps(fn)
-    def decorated(*args, **kwargs):
-        token = None
-
-        if 'Authorization' in request.headers:
-            token = request.headers['Authorization']
-
-        if not token:
-            return {'msg': 'Token is needed'}, 499
-
-        if token != 'abc':
-            return {'msg': 'Token is invalid'}, 498
-
-        return fn(*args, **kwargs)
-
-    return decorated
 

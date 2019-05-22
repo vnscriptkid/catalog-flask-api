@@ -14,7 +14,6 @@ api = Namespace('articles', description="Article operations")
 class ArticleList(Resource):
     @staticmethod
     def get():
-        print('current user: ', current_identity)
         arts = ArticleModel.get_all()
         try:
             output = articles_schema.dump(arts)

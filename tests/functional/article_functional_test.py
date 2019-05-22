@@ -10,7 +10,6 @@ SECOND_USER = {
     "password": "123456"
 }
 
-
 def get_token_helper(test_client, user=DEFAULT_USER):
     res = test_client.post('/auth', json=user)
     json_data = json.loads(res.data)
@@ -51,7 +50,7 @@ def test_post_article_with_valid_token(test_client, init_database):
     assert res.status_code == 201
     assert json_article['title'] == art['title']
     assert json_article['body'] == art['body']
-    assert json_article['category']['id'] == 2
+    assert json_article['category']['id'] == art['category_id']
     assert json_article['author']['username'] == "vnscriptkid"
     assert json_article['id'] == 2
     assert "created_at" in json_article
@@ -109,5 +108,3 @@ def test_delete_article_with_valid_token_not_by_author(test_client, init_databas
     assert res.status_code == 401
     json_data = json.loads(res.data)
     assert json_data['msg'] == 'Unauthorized access'
-
-

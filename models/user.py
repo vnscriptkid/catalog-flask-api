@@ -21,7 +21,6 @@ class UserModel(db.Model):
         self.last_name = last_name
 
     def save(self):
-        print('self: ', self)
         if self.find_by_username(self.username):
             raise UserAlreadyExists()
         else:
