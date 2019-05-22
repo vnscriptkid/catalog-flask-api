@@ -6,6 +6,8 @@ from schemas.article import article_schema, articles_schema
 from models.article import ArticleModel
 from decorators.authorization import jwt_needed, must_be_author
 from errors.category import CategoryNotFound
+from errors.article import ArticleNotFound, ArticleInvalid
+from errors.error import ServerError
 
 api = Namespace('articles', description="Article operations")
 
@@ -14,13 +16,12 @@ api = Namespace('articles', description="Article operations")
 class ArticleList(Resource):
     @staticmethod
     def get():
-        print('current user: ', current_identity)
-        arts = ArticleModel.get_all()
+        articles = ArticleModel.get_all()
         try:
-            output = articles_schema.dump(arts)
+            output = articles_schema.dump(articles)
         except ValidationError as err:
             return err.messages, 422
-        return output.data, 200
+        return output.data
 
     @jwt_needed
     def post(self):
@@ -29,100 +30,84 @@ class ArticleList(Resource):
             data = api.payload
             data['author_id'] = current_identity.id
         except:
-            return {'msg': 'Bad Request'}, 400
+            return ArticleInvalid.get_response()
 
-        # Is data coming in valid
+        # validate data
         try:
             result = article_schema.load(data)
-        except ValidationError as err:
-            return err.messages, 422
+        except ValidationError as error:
+            return ArticleInvalid.get_response(error=error.messages)
 
         # Good, save to db
         try:
-            art = ArticleModel(**result.data)
-            art.save()
+            article = ArticleModel(**result.data)
+            article.save()
         except CategoryNotFound as err:
-            return {'msg': err.msg}, 404
+            return CategoryNotFound.get_response()
         except:
-            return {'msg': 'Can not save the article to db'}, 500
+            return ServerError.get_response()
 
-        # Is data coming out valid
-        try:
-            output = article_schema.dump(art)
-        except ValidationError as err:
-            return err.messages, 422
+        # Filter what should be showed to user
+        output = article_schema.dump(article)
 
-        # Good, successful
-        return output.data, 201
+        # Send back
+        return output.data
 
 
 @api.route('/<article_id>')
 class Article(Resource):
     @staticmethod
     def get(article_id):
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
-            return {'msg': 'Article not found'}, 404
-        try:
-            output = article_schema.dump(art)
-        except ValidationError as err:
-            return err.messages, 422
+        article = ArticleModel.find_by_id(article_id)
+        if article is None:
+            return ArticleNotFound.get_response()
 
-        return output.data, 200
+        # Filter what should be showed to user
+        output = article_schema.dump(article)
+
+        # Send back
+        return output.data
 
     @jwt_needed
     @must_be_author
     def delete(self, article_id):
-        # Does article_id exi
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
-            return {'msg': 'Article not found'}, 404
+        article = ArticleModel.find_by_id(article_id)
         try:
-            art.delete()
+            article.delete()
         except:
-            return {'msg': 'Can not delete the article'}, 500
+            return ServerError.get_response()
 
-        return {'success': True}, 204
+        return {"message": "Successful deleted"}
 
     @jwt_needed
     @must_be_author
     def put(self, article_id):
         # Does article_id exist?
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
-            return {'msg': 'Article not found'}, 404
+        article = ArticleModel.find_by_id(article_id)
 
         # Is data coming in good?
         try:
             data = api.payload
             data['author_id'] = current_identity.id
         except:
-            return {'msg': 'Bad requests'}, 400
+            return ArticleInvalid.get_response()
+
         try:
             result = article_schema.load(data)
-        except ValidationError as err:
-            return err.messages, 422
+        except ValidationError as error:
+            return ArticleInvalid.get_response()
 
         # update to db
         try:
-            art.update_props(**result.data)
-            art.save()
-        except CategoryNotFound as err:
-            return {'msg': err.msg}, 404
+            article.update_props(**result.data)
+            article.save()
+        except CategoryNotFound:
+            return CategoryNotFound.get_response()
         except:
-            return {'msg': 'Can not save the article to db'}, 500
+            return ServerError.get_response()
 
-        # is data coming out good?
-        try:
-            output = article_schema.dump(art)
-        except ValidationError as err:
-            return err.messages, 422
+        # Filter only what should be showed to user:
+        output = article_schema.dump(article)
 
         # Good, successful
-        return output.data, 200
-
-
-
-
-
-
+        return output.data

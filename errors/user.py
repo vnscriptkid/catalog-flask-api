@@ -1,12 +1,16 @@
-class UserException(BaseException):
+from errors.error import Error
+from status_code import Code
+
+
+class UserException(Error):
     pass
 
 
 class UserNotFound(UserException):
-    msg = "User Not Found"
+    message = "User Not Found"
+    status_code = Code.NOT_FOUND
 
 
 class UserAlreadyExists(UserException):
-    msg = "User already exists"
-
-
+    message = "User already exists"
+    status_code = Code.BAD_REQUEST

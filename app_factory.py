@@ -11,6 +11,7 @@ from security import authenticate, identity
 from config import app_config
 from debug import sql_debug
 from db import db
+from debug import sql_debug
 
 
 def create_app(config_name):
@@ -36,6 +37,6 @@ def register_api(api):
 
 
 def init_extensions(app):
-    jwt = JWT(app, authenticate, identity)
+    JWT(app, authenticate, identity)
     db.init_app(app)
     db.create_all(app=app)

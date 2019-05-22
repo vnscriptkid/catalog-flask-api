@@ -12,25 +12,25 @@ class UserSchema(Schema):
     class Meta:
         strict = True
 
-    # @validates('username')
-    # def validate_username(self, username):
-    #     if len(username) < 3 or len(username) > 20:
-    #         raise ValidationError("Username must be in between 3 and 20 characters")
+    @validates('username')
+    def validate_username(self, username):
+        if len(username) < 3 or len(username) > 20:
+            raise ValidationError("Username must be in between 3 and 20 characters")
 
-    # @validates('password')
-    # def validate_password(self, password):
-    #     if len(password) < 6 or len(password) > 15:
-    #         raise ValidationError("Username must be in between 6 and 15 characters")
-    #
-    # @validates('first_name')
-    # def validate_first_name(self, first_name):
-    #     if len(first_name) < 3 or len(first_name) > 20:
-    #         raise ValidationError("Firstname must be in between 3 and 20 characters")
-    #
-    # @validates('last_name')
-    # def validate_first_name(self, last_name):
-    #     if len(last_name) < 3 or len(last_name) > 20:
-    #         raise ValidationError("Lastname must be in between 3 and 20 characters")
+    @validates('password')
+    def validate_password(self, password):
+        if len(password) < 6 or len(password) > 15:
+            raise ValidationError("Username must be in between 6 and 15 characters")
+
+    @validates('first_name')
+    def validate_first_name(self, first_name):
+        if len(first_name) < 3 or len(first_name) > 20:
+            raise ValidationError("Firstname must be in between 3 and 20 characters")
+
+    @validates('last_name')
+    def validate_first_name(self, last_name):
+        if len(last_name) < 3 or len(last_name) > 20:
+            raise ValidationError("Lastname must be in between 3 and 20 characters")
 
 
 user_schema = UserSchema()

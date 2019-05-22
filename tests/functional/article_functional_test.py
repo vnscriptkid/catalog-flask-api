@@ -51,7 +51,7 @@ def test_post_article_with_valid_token(test_client, init_database):
     assert res.status_code == 201
     assert json_article['title'] == art['title']
     assert json_article['body'] == art['body']
-    assert json_article['category']['id'] == 2
+    assert json_article['category']['id'] == art['category_id']
     assert json_article['author']['username'] == "vnscriptkid"
     assert json_article['id'] == 2
     assert "created_at" in json_article
@@ -70,7 +70,7 @@ def test_edit_article_with_token_not_by_author(test_client, init_database):
     res = test_client.put('/articles/1', headers={'Authorization': 'JWT {}'.format(token)})
     json_data = json.loads(res.data)
     assert res.status_code == 401
-    assert json_data['msg'] == 'Unauthorized access'
+    assert json_data['message'] == 'Unauthorized access'
 
 
 def test_edit_article_with_token_by_author(test_client, init_database):
@@ -108,6 +108,4 @@ def test_delete_article_with_valid_token_not_by_author(test_client, init_databas
 
     assert res.status_code == 401
     json_data = json.loads(res.data)
-    assert json_data['msg'] == 'Unauthorized access'
-
-
+    assert json_data['message'] == 'Unauthorized access'

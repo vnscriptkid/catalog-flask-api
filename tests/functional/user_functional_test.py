@@ -32,4 +32,3 @@ def test_falsy_credentials(test_client, init_database):
     json_data = json.loads(res.data)
     assert res.status_code == 401
     assert json_data['description'] == 'Invalid credentials'
-

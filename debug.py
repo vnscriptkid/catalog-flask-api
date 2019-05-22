@@ -9,8 +9,6 @@ def sql_debug(response):
         query = q.statement.replace('?', '{}')
         param_list = list(q.parameters)
         print(query.format(*param_list))
-        # print(q.statement, type(q.statement))
-        # print(q.parameters, len(q.parameters))
 
     print('=' * 80)
     print(' SQL Queries - {0} Queries Executed in {1}ms'.format(len(queries), round(total_duration * 1000, 2)))
