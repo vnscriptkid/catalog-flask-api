@@ -5,6 +5,8 @@ from models.category import CategoryModel
 from models.article import ArticleModel
 from schemas.category import categories_schema, category_schema
 from schemas.article import articles_schema
+from errors.category import CategoryNotFound
+from errors.error import ServerError
 
 api = Namespace('categories', description="Category operations")
 
@@ -13,12 +15,12 @@ api = Namespace('categories', description="Category operations")
 class CategoryList(Resource):
     @staticmethod
     def get():
-        cats = CategoryModel.get_all()
-        try:
-            output = categories_schema.dump(cats)
-        except ValidationError as err:
-            return err.messages, 422
-        return output.data, 200
+        categories = CategoryModel.get_all()
+
+        # Make sure to show only what should be
+        output = categories_schema.dump(categories)
+
+        return output.data
 
 
 @api.route('/<_id>/articles')
@@ -26,35 +28,19 @@ class ArticlesInCategory(Resource):
     @staticmethod
     def get(_id):
         # Does category_id exist
-        cat = CategoryModel.find_by_id(_id)
-        if not cat:
-            return {'msg': 'Category not found'}, 404
+        category = CategoryModel.find_by_id(_id)
+        if not category:
+            return CategoryNotFound.get_response()
 
         # Good, pull all articles with that category
         try:
-            arts = ArticleModel.find_by_cat(cat)
+            articles = ArticleModel.find_by_cat(category)
         except:
-            return {'msg': 'Can not find articles'}, 500
+            return ServerError.get_response()
 
-        # Is data coming out good?
-        try:
-            output = articles_schema.dump(arts)
-        except ValidationError as err:
-            return err.messages, 422
+        # Show only what should be showed
+        output = articles_schema.dump(articles)
 
-        # Good, successful
-        return output.data, 200
+        # Good, send back
+        return output.data
 
-
-@api.route('/<_id>')
-class Category(Resource):
-    @staticmethod
-    def get(_id):
-        cat = CategoryModel.find_by_id(_id)
-        if not cat:
-            return {'msg': 'Category not found'}, 404
-        try:
-            output = category_schema.dump(cat)
-        except ValidationError as err:
-            return err.messages, 422
-        return output.data, 200

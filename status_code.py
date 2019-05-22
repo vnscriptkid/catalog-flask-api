@@ -1,0 +1,6 @@
+class Code:
+    SUCCESS = 200
+    BAD_REQUEST = 400
+    UNAUTHORIZED = 403
+    SERVER_ERROR = 500
+    NOT_FOUND = 404

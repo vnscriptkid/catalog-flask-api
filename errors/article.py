@@ -1,10 +1,21 @@
-class ArticleError(BaseException):
+from errors.error import Error
+from status_code import Code
+
+
+class ArticleError(Error):
     pass
 
 
 class ArticleAlreadyExists(ArticleError):
-    msg = 'Article already exists'
+    message = 'Article already exists'
+    status_code = Code.BAD_REQUEST
 
 
 class ArticleNotFound(ArticleError):
-    msg = 'Article not found'
+    message = 'Article not found'
+    status_code = Code.NOT_FOUND
+
+
+class ArticleInvalid(ArticleError):
+    message = 'Article invalid'
+    status_code = Code.BAD_REQUEST
