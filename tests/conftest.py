@@ -9,7 +9,6 @@ from models.article import ArticleModel
 
 @pytest.fixture(scope="module")
 def test_client():
-    """Create and configure a new app instance for each test."""
     app = create_app("testing")
 
     testing_client = app.test_client()
@@ -42,7 +41,7 @@ def init_database():
 
     db.session.commit()
 
-    yield db  # this is where the testing happens!
+    yield db
 
     db.drop_all()
 

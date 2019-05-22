@@ -10,6 +10,7 @@ SECOND_USER = {
     "password": "123456"
 }
 
+
 def get_token_helper(test_client, user=DEFAULT_USER):
     res = test_client.post('/auth', json=user)
     json_data = json.loads(res.data)

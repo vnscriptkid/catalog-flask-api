@@ -38,8 +38,8 @@ class ArticleList(Resource):
 
         # Good, save to db
         try:
-            art = ArticleModel(**result.data)
-            art.save()
+            article = ArticleModel(**result.data)
+            article.save()
         except CategoryNotFound as err:
             return {'msg': err.msg}, 404
         except:
@@ -47,7 +47,7 @@ class ArticleList(Resource):
 
         # Is data coming out valid
         try:
-            output = article_schema.dump(art)
+            output = article_schema.dump(article)
         except ValidationError as err:
             return err.messages, 422
 
@@ -59,11 +59,11 @@ class ArticleList(Resource):
 class Article(Resource):
     @staticmethod
     def get(article_id):
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
+        article = ArticleModel.find_by_id(article_id)
+        if article is None:
             return {'msg': 'Article not found'}, 404
         try:
-            output = article_schema.dump(art)
+            output = article_schema.dump(article)
         except ValidationError as err:
             return err.messages, 422
 
@@ -73,11 +73,11 @@ class Article(Resource):
     @must_be_author
     def delete(self, article_id):
         # Does article_id exi
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
+        article = ArticleModel.find_by_id(article_id)
+        if article is None:
             return {'msg': 'Article not found'}, 404
         try:
-            art.delete()
+            article.delete()
         except:
             return {'msg': 'Can not delete the article'}, 500
 
@@ -87,8 +87,8 @@ class Article(Resource):
     @must_be_author
     def put(self, article_id):
         # Does article_id exist?
-        art = ArticleModel.find_by_id(article_id)
-        if art is None:
+        article = ArticleModel.find_by_id(article_id)
+        if article is None:
             return {'msg': 'Article not found'}, 404
 
         # Is data coming in good?
@@ -104,8 +104,8 @@ class Article(Resource):
 
         # update to db
         try:
-            art.update_props(**result.data)
-            art.save()
+            article.update_props(**result.data)
+            article.save()
         except CategoryNotFound as err:
             return {'msg': err.msg}, 404
         except:
@@ -113,15 +113,9 @@ class Article(Resource):
 
         # is data coming out good?
         try:
-            output = article_schema.dump(art)
+            output = article_schema.dump(article)
         except ValidationError as err:
             return err.messages, 422
 
         # Good, successful
         return output.data, 200
-
-
-
-
-
-

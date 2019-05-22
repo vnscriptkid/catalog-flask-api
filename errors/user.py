@@ -8,5 +8,3 @@ class UserNotFound(UserException):
 
 class UserAlreadyExists(UserException):
     msg = "User already exists"
-
-

@@ -1,6 +1,5 @@
 from flask_jwt import _jwt_required, JWTError, current_identity
 from functools import wraps
-from flask import request
 
 from models.article import ArticleModel
 
@@ -33,6 +32,3 @@ def must_be_author(fn):
             return {'msg': 'Unauthorized access'}, 403
         return fn(*args, **kwargs)
     return enhanced_fn
-
-
-

@@ -9,6 +9,7 @@ from controllers.user import api as user_api
 from security import authenticate, identity
 from config import app_config
 from db import db
+from debug import sql_debug
 
 
 def create_app(config_name):
@@ -16,6 +17,7 @@ def create_app(config_name):
     app.url_map.strict_slashes = False
     app.config.from_object(app_config[config_name])
     app.secret_key = os.getenv('SECRET_KEY') or 'keep it in ur pocket!'
+    app.after_request(sql_debug)
 
     api = Api(app, title="Restful API", description="Blogging App")
     register_api(api)
@@ -32,6 +34,6 @@ def register_api(api):
 
 
 def init_extensions(app):
-    jwt = JWT(app, authenticate, identity)
+    JWT(app, authenticate, identity)
     db.init_app(app)
     db.create_all(app=app)

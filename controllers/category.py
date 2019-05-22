@@ -1,6 +1,5 @@
 from flask_restplus import Namespace, Resource
 from marshmallow import ValidationError
-from flask_jwt import jwt_required
 
 from models.category import CategoryModel
 from models.article import ArticleModel
@@ -12,6 +11,7 @@ api = Namespace('categories', description="Category operations")
 
 @api.route('/')
 class CategoryList(Resource):
+    @staticmethod
     def get():
         cats = CategoryModel.get_all()
         try:
@@ -19,32 +19,6 @@ class CategoryList(Resource):
         except ValidationError as err:
             return err.messages, 422
         return output.data, 200
-
-    # @staticmethod
-    # def post():
-    #     try:
-    #         data = api.payload  # dict type
-    #     except:
-    #         return {'msg': 'Bad Request'}, 400
-    #     try:
-    #         result = category_schema.load(data)
-    #     except ValidationError as err:
-    #         return err.messages, 422
-    #
-    #     try:
-    #         cat = CategoryModel(**result.data)
-    #         cat.save()
-    #     except CategoryAlreadyExists as err:
-    #         return {'msg': err.msg}, 409
-    #     except:
-    #         return {'msg': 'Can not save the Category'}, 500
-    #
-    #     try:
-    #         output = category_schema.dump(cat)
-    #     except ValidationError as err:
-    #         return err.messages, 422
-    #
-    #     return output.data, 201
 
 
 @api.route('/<_id>/articles')
@@ -84,6 +58,3 @@ class Category(Resource):
         except ValidationError as err:
             return err.messages, 422
         return output.data, 200
-
-
-
