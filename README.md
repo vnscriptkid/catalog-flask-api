@@ -21,3 +21,10 @@
 * GET /categories/category_id/articles
 * POST /users
 * POST /auth
+
+### Installation
+* pip install -r requirements.txt
+* python dev_start.py
+
+
+
