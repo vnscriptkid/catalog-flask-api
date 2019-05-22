@@ -1,5 +1,4 @@
 from flask_restplus import Namespace, Resource
-from marshmallow import ValidationError
 
 from models.category import CategoryModel
 from models.article import ArticleModel

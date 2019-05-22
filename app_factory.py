@@ -1,6 +1,7 @@
 from flask_restplus import Api
 from flask_jwt import JWT
 from flask import Flask
+from flask_cors import CORS
 import os
 
 from controllers.category import api as category_api
@@ -18,6 +19,7 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.secret_key = os.getenv('SECRET_KEY') or 'keep it in ur pocket!'
     app.after_request(sql_debug)
+    CORS(app)
 
     api = Api(app, title="Restful API", description="Blogging App")
     register_api(api)

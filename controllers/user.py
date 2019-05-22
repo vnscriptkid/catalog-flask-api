@@ -8,8 +8,8 @@ from errors.user import UserAlreadyExists
 api = Namespace('users', description="User operations")
 
 
-@api.route('/register')
-class UserRegister(Resource):
+@api.route('/')
+class Users(Resource):
     @staticmethod
     def post():
         # Parse request
