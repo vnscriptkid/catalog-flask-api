@@ -12,7 +12,7 @@ def jwt_needed(fn):
         try:
             _jwt_required(None)
         except JWTError as err:
-            return {err.error: err.description}, 499
+            return {err.error: err.description}, 403
         return fn(*args, **kwargs)
 
     return enhanced_fn

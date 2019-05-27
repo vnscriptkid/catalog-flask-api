@@ -18,7 +18,7 @@ def test_resgister_new_user(test_client, init_database):
         'first_name': "john",
         'last_name': "kennedy"
     }
-    res = test_client.post('/users/register', json=user)
+    res = test_client.post('/users', json=user)
     assert res.status_code == 201
     res_json = json.loads(res.data)
     assert res_json['username'] == user['username']
