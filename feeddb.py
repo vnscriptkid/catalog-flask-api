@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-engine = create_engine('sqlite:///db.sqlite', echo=True)
+engine = create_engine('sqlite:///db.sqlite.prod', echo=True)
 from sqlalchemy.orm import sessionmaker
 from models.user import UserModel
 from models.category import CategoryModel
@@ -17,28 +17,28 @@ db.create_all(app=app)
 
 
 # Feed users
-# session.add_all([
-#     UserModel(username="vnscriptkid", password="123456", first_name="thanh", last_name="nguyen"),
-#     UserModel(username="firmino9", password="123456", first_name="roberto", last_name="firmino"),
-#     UserModel(username="hendo14", password="123456", first_name="jordan", last_name="henderson"),
-#     UserModel(username="mane10", password="123456", first_name="sadio", last_name="mane"),
-#     UserModel(username="mosalah11", password="123456", first_name="mohamed", last_name="salah"),
-#     UserModel(username="keita8", password="123456", first_name="naby", last_name="keita")
-# ])
+session.add_all([
+    UserModel(username="vnscriptkid", password="123456", first_name="thanh", last_name="nguyen"),
+    UserModel(username="firmino9", password="123456", first_name="roberto", last_name="firmino"),
+    UserModel(username="hendo14", password="123456", first_name="jordan", last_name="henderson"),
+    UserModel(username="mane10", password="123456", first_name="sadio", last_name="mane"),
+    UserModel(username="mosalah11", password="123456", first_name="mohamed", last_name="salah"),
+    UserModel(username="keita8", password="123456", first_name="naby", last_name="keita")
+])
 
 # Feed Categories
-# session.add_all([
-#     CategoryModel(name="Shopping"),
-#     CategoryModel(name="Travelling"),
-#     CategoryModel(name="Coding"),
-#     CategoryModel(name="Cuisine"),
-#     CategoryModel(name="Football"),
-#     CategoryModel(name="Celebrities"),
-#     CategoryModel(name="Scandal"),
-#     CategoryModel(name="News"),
-#     CategoryModel(name="Gym"),
-#     CategoryModel(name="Love"),
-# ])
+session.add_all([
+    CategoryModel(name="Shopping"),
+    CategoryModel(name="Travelling"),
+    CategoryModel(name="Coding"),
+    CategoryModel(name="Cuisine"),
+    CategoryModel(name="Football"),
+    CategoryModel(name="Celebrities"),
+    CategoryModel(name="Scandal"),
+    CategoryModel(name="News"),
+    CategoryModel(name="Gym"),
+    CategoryModel(name="Love"),
+])
 
 
 # Feed Articles

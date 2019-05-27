@@ -33,7 +33,7 @@ class ProductionConfig(Config):
     """Configurations for Production."""
     DEBUG = False
     TESTING = False
-    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite.prod"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite"
 
 
 app_config = {
